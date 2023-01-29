@@ -1,3 +1,5 @@
+USE COMP8071;
+
 -- Customer table
 IF OBJECT_ID(N'COMP8071.Customer', N'U') IS NOT NULL
     DROP TABLE dbo.Customer;
@@ -43,7 +45,7 @@ IF OBJECT_ID(N'dbo.Rolap_Employee_Dim', N'U') IS NOT NULL
     DROP TABLE dbo.Rolap_Employee_Dim;
 GO
 CREATE TABLE Rolap_Employee_Dim(
-	ID INT NOT NULL IDENTITY PRIMARY KEY,
+	ID INT NOT NULL PRIMARY KEY,
 	Name VARCHAR(128),
 	Address VARCHAR(128),
 	ManagerID INT,
@@ -73,6 +75,16 @@ CREATE TABLE Rolap_ServiceType_Dim(
 	CertificationReqts VARCHAR(256),
 	Rate MONEY
 );
+
+IF(NOT EXISTS(SELECT 1 FROM dbo.ServiceType))
+	-- Insert into ServiceType
+	INSERT INTO ServiceType VALUES ('Nursing', 'Nursing', 25);
+	INSERT INTO ServiceType VALUES ('Medical', 'Medical', 45);
+	INSERT INTO ServiceType VALUES ('Cleaning', 'Custodial', 15);
+	INSERT INTO ServiceType VALUES ('Food Prep', 'Foodsafe', 20);
+	INSERT INTO ServiceType VALUES ('Administration', NULL, 22);
+	GO
+;
 
 -- CustomerService table
 IF OBJECT_ID(N'dbo.CustomerService', N'U') IS NOT NULL
@@ -104,13 +116,13 @@ GO
 CREATE TABLE Rolap_CustomerServiceSchedule_Facts(
 	CustomerID INT NOT NULL,
 	ServiceTypeID INT NOT NULL,
-	EmployeeID INT NOT NULL,
+	EmployeeID INT,
 	StartDateTime DATETIME,
 	ActualDuration DECIMAL,
 	Status CHAR(1),
-	CONSTRAINT PK_CustomerServiceSchedule PRIMARY KEY (CustomerID, ServiceTypeID, EmployeeID)
+	CONSTRAINT PK_RCustomerServiceSchedule PRIMARY KEY (CustomerID, ServiceTypeID)
 );
-
+GO
 
 -- Create Triggers
 CREATE TRIGGER Tr_CustomerAdded ON Customer
@@ -124,7 +136,8 @@ GO
 
 CREATE TRIGGER Tr_EmployeeAdded ON Employee
 AFTER INSERT
-AS BEGIN
+AS 
+BEGIN
 	INSERT INTO dbo.Rolap_Employee_Dim SELECT * FROM INSERTED ins;
 	PRINT 'Copied an employee'
 END
@@ -133,7 +146,7 @@ GO
 CREATE TRIGGER Tr_ServiceAdded ON ServiceType
 AFTER INSERT
 AS BEGIN
-	INSERT INTO dbo.Rolap_Service_Dim SELECT * FROM INSERTED ins;
+	INSERT INTO dbo.Rolap_ServiceType_Dim SELECT * FROM INSERTED ins;
 	PRINT 'Copied a service'
 END
 GO
@@ -168,36 +181,3 @@ DECLARE
 	WHERE EmployeeID = @EmployeeID;
 END
 GO
-
--- TODO: - IF STATEMENT PROBABLY DOESN'T WORK ---------------------------------------------------------------------------------------
--- Insert Sample Data
-IF ((SELECT COUNT(*) FROM dbo.Customer) = 0)
-    -- Insert into Customer
-	INSERT INTO Customer VALUES ('Tom Cruise', '123 Anywhere Street', '1970-01-01', NULL, 'M');
-	INSERT INTO Customer VALUES ('Bill Paxton', '123 Anywhere Street', '1970-01-01', NULL, 'M');
-	INSERT INTO Customer VALUES ('Bill Pullman', '123 Anywhere Street', '1970-01-01', NULL, 'M');
-	INSERT INTO Customer VALUES ('Charlie Sheen', '123 Anywhere Street', '1970-01-01', NULL, 'M');
-	INSERT INTO Customer VALUES ('Tom Sizemore', '123 Anywhere Street', '1970-01-01', NULL, 'M');
-	GO
-
-IF ((SELECT COUNT(*) FROM dbo.Employee) = 0)
-	-- Insert into Employee
-	INSERT INTO Employee VALUES ('Joe Biden', '1 Pensylvania Avenue', NULL, 'President', 'All',  DATEADD(year, -2, GETDATE()), 200000);
-	INSERT INTO Employee VALUES ('Donal Trump', '1 Pensylvania Avenue', 1, 'President', 'All', DATEADD(year, -6, GETDATE()), 100000);
-	INSERT INTO Employee VALUES ('Barrack Obama', '1 Pensylvania Avenue', 1, 'President', 'All', DATEADD(year, -14, GETDATE()), 100000);
-	INSERT INTO Employee VALUES ('George Bush', '1 Pensylvania Avenue', 1, 'President', 'All', DATEADD(year, -22, GETDATE()), 100000);
-	INSERT INTO Employee VALUES ('Bill Clinton', '1 Pensylvania Avenue', 1, 'President', 'All', DATEADD(year, -30, GETDATE()), 100000);
-	GO
-
-IF ((SELECT COUNT(*) FROM dbo.ServiceType) = 0)
-	-- Insert into ServiceType
-	INSERT INTO ServiceType VALUES ('Nursing', 'Nursing', 25);
-	INSERT INTO ServiceType VALUES ('Medical', 'Medical', 45);
-	INSERT INTO ServiceType VALUES ('Cleaning', 'Custodial', 15);
-	INSERT INTO ServiceType VALUES ('Food Prep', 'Foodsafe', 20);
-	INSERT INTO ServiceType VALUES ('Administration', NULL, 22);
-	GO
-
-
-;
-

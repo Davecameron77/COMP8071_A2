@@ -1,4 +1,4 @@
-USE COMP8071;
+--USE COMP8071;
 
 -- Customer table
 IF OBJECT_ID(N'dbo.Customer', N'U') IS NOT NULL
@@ -101,13 +101,13 @@ IF OBJECT_ID(N'dbo.CustomerServiceSchedule', N'U') IS NOT NULL
     DROP TABLE dbo.CustomerServiceSchedule;
 GO
 CREATE TABLE CustomerServiceSchedule(
+	ID INT NOT NULL PRIMARY KEY,
 	CustomerID INT NOT NULL,
 	ServiceTypeID INT NOT NULL,
 	EmployeeID INT NOT NULL,
-	StartDateTime DATETIME,
+	StartDateTime DATETIME NOT NULL,
 	ActualDuration DECIMAL,
-	Status CHAR(1),
-	CONSTRAINT PK_CustomerServiceSchedule PRIMARY KEY (CustomerID, ServiceTypeID, EmployeeID)
+	Status CHAR(1)
 );
 -- ROLAP CustomerServiceSchedule Facts
 IF OBJECT_ID(N'dbo.Rolap_CustomerServiceSchedule_Facts', N'U') IS NOT NULL
@@ -163,11 +163,13 @@ CREATE TRIGGER Tr_CustomerServiceScheduleAdded ON CustomerServiceSchedule
 AFTER INSERT
 AS BEGIN
 DECLARE 
+	@ID INT,
 	@EmployeeID INT,
 	@StartDateTime Date,
 	@ActualDuration Decimal(18,0),
 	@Status Char(1);
 
+	SELECT @ID = ins.ID FROM INSERTED ins;
 	SELECT @EmployeeID = ins.EmployeeID FROM INSERTED ins;
 	SELECT @StartDateTime = ins.StartDateTime FROM INSERTED ins;
 	SELECT @ActualDuration = ins.ActualDuration FROM INSERTED ins;
@@ -178,6 +180,6 @@ DECLARE
 		StartDateTime = @StartDateTime,
 		ActualDuration = @ActualDuration,
 		Status = @Status
-	WHERE EmployeeID = @EmployeeID;
+	WHERE ID = @ID
 END
 GO

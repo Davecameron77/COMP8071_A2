@@ -46,30 +46,33 @@ for (int i=0; i<customersToInsert; i++)
 Console.WriteLine($"Inserted {customersToInsert} customers");
 
 Console.WriteLine("Scheduling services");
-for (int i=0; i<servicesToSchedule; i++)
+List<(int, int, int, double)> scheduledServices = new();
+for (int i=1; i<servicesToSchedule; i++)
 {
     var customerID = Random.Shared.Next(customersToInsert);
-    var employeeID = Random.Shared.Next(4);
+    var serviceTypeID = Random.Shared.Next(4);
     var expectedDuration = (double)Random.Shared.Next(100);
+    scheduledServices.Add((i, customerID, serviceTypeID, expectedDuration));
 
     string query = $"INSERT INTO CustomerService (CustomerID, ServiceTypeID, ExpectedDuration)" +
-                   $"VALUES ({customerID}, {employeeID}, {expectedDuration})";
+                   $"VALUES ({customerID}, {serviceTypeID}, {expectedDuration})";
     DatabaseConnection.InsertData(query);
 }
 Console.WriteLine($"Scheduled {servicesToSchedule} services");
 
 Console.WriteLine("Implementing services");
-for (int i=0; i<servicesToImplement; i++)
+foreach(var service in scheduledServices)
 {
-    var customerID = Random.Shared.Next(customersToInsert);
+    var ID = service.Item1;
+    var customerID = service.Item2;
+    var serviceTypeID = service.Item3;
     var employeeID = Random.Shared.Next(employeesToInsert);
-    var serviceTypeID = Random.Shared.Next(servicesToSchedule);
     var startDateTime = RandomDay();
     var actualDuration = (double)Random.Shared.Next(100);
-    var status = statuses[Random.Shared.Next(1)];
+    var status = statuses[Random.Shared.Next(2)];
 
-    string query = $"INSERT INTO CustomerServiceSchedule (CustomerID, ServiceTypeID, EmployeeID, StartDateTime, ActualDuration, Status)" +
-                   $"VALUES ({customerID}, {serviceTypeID}, {employeeID}, '{startDateTime}', {actualDuration}, '{status}')";
+    string query = $"INSERT INTO CustomerServiceSchedule (ID, CustomerID, ServiceTypeID, EmployeeID, StartDateTime, ActualDuration, Status)" +
+                   $"VALUES ({ID}, {customerID}, {serviceTypeID}, {employeeID}, '{startDateTime}', {actualDuration}, '{status}')";
     DatabaseConnection.InsertData(query);
 }
 Console.WriteLine($"Implemented {servicesToImplement} services");

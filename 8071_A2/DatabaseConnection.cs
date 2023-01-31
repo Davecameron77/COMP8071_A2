@@ -9,7 +9,7 @@ namespace _8071_A2
         {
             get
             {
-                const string host = "localhost";
+                const string host = "localhost";// "bcit-comp.database.windows.net";
                 const string username = "sa";
                 const string database = "COMP8071";
                 const string password = "P@ssw0rd";

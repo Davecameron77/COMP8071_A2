@@ -1,5 +1,4 @@
 ﻿using System.Data.Odbc;
-using System.Reflection.Metadata.Ecma335;
 
 namespace _8071_A2
 {

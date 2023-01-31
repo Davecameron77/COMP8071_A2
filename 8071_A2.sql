@@ -1,4 +1,4 @@
---USE COMP8071;
+USE COMP8071;
 
 -- Customer table
 IF OBJECT_ID(N'dbo.Customer', N'U') IS NOT NULL

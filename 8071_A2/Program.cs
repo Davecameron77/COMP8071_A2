@@ -46,6 +46,8 @@ for (int i=0; i<customersToInsert; i++)
 Console.WriteLine($"Inserted {customersToInsert} customers");
 
 Console.WriteLine("Scheduling services");
+// This list of tuples is holding scheduled services
+// for insert into CustomerServiceSchedule and trigger update
 List<(int, int, int, double)> scheduledServices = new();
 for (int i=1; i<servicesToSchedule; i++)
 {
@@ -61,7 +63,8 @@ for (int i=1; i<servicesToSchedule; i++)
 Console.WriteLine($"Scheduled {servicesToSchedule} services");
 
 Console.WriteLine("Implementing services");
-foreach(var service in scheduledServices)
+// Using list of tuples 
+foreach (var service in scheduledServices)
 {
     var ID = service.Item1;
     var customerID = service.Item2;
@@ -77,6 +80,7 @@ foreach(var service in scheduledServices)
 }
 Console.WriteLine($"Implemented {servicesToImplement} services");
 
+// Helper to make a random scheduled Day
 DateTime RandomDay()
 {
     DateTime start = new DateTime(2022, 1, 1);

@@ -49,7 +49,7 @@ Console.WriteLine("Scheduling services");
 for (int i=0; i<servicesToSchedule; i++)
 {
     var customerID = Random.Shared.Next(customersToInsert);
-    var employeeID = Random.Shared.Next(employeesToInsert);
+    var employeeID = Random.Shared.Next(4);
     var expectedDuration = (double)Random.Shared.Next(100);
 
     string query = $"INSERT INTO CustomerService (CustomerID, ServiceTypeID, ExpectedDuration)" +

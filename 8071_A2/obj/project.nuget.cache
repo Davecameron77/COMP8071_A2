@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jnWJrjlQmNQ9cGKm+gDxieLAcHyKx8Ci+RAnUN6Ien435rUYt5M0WjWZrMG+seMMdxIfjyQ9NK0NKj9TNIh5Dg==",
+  "dgSpecHash": "BfxXjrAV12FzYz4v9X2RG4D+fuCgLnP1jhwt5M4oT3zD4tDCu7EyHAsMKMDKjrqcT8TU7ttG3IzElZh1cSARCA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\davecameron\\source\\repos\\8071_A2\\8071_A2.csproj",
+  "projectFilePath": "C:\\Users\\davecameron\\source\\repos\\8071_A2\\COMP8071_A2\\8071_A2\\8071_A2.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\davecameron\\.nuget\\packages\\system.data.odbc\\7.0.0\\system.data.odbc.7.0.0.nupkg.sha512",
     "C:\\Users\\davecameron\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.0.0\\system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",

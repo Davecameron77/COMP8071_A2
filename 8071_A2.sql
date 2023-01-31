@@ -1,10 +1,10 @@
 USE COMP8071;
 
 -- Customer table
-IF OBJECT_ID(N'COMP8071.Customer', N'U') IS NOT NULL
+IF OBJECT_ID(N'dbo.Customer', N'U') IS NOT NULL
     DROP TABLE dbo.Customer;
 GO
-CREATE TABLE dbo.Customer(
+CREATE TABLE Customer(
 	ID INT NOT NULL IDENTITY PRIMARY KEY,
 	Name VARCHAR(128),
 	Address VARCHAR(128),
@@ -13,10 +13,10 @@ CREATE TABLE dbo.Customer(
 	Gender CHAR(1)
 );
 -- ROLAP Customer table
-IF OBJECT_ID(N'COMP8071.Rolap_Customer_Dim', N'U') IS NOT NULL
+IF OBJECT_ID(N'dbo.Rolap_Customer_Dim', N'U') IS NOT NULL
     DROP TABLE dbo.Rolap_Customer_Dim;
 GO
-CREATE TABLE dbo.Rolap_Customer_Dim(
+CREATE TABLE Rolap_Customer_Dim(
 	ID INT NOT NULL PRIMARY KEY,
 	Name VARCHAR(128),
 	Address VARCHAR(128),
@@ -91,10 +91,10 @@ IF OBJECT_ID(N'dbo.CustomerService', N'U') IS NOT NULL
     DROP TABLE dbo.CustomerService;
 GO
 CREATE TABLE CustomerService(
+	ID INT NOT NULL IDENTITY PRIMARY KEY,
 	CustomerID INT NOT NULL,
 	ServiceTypeID INT NOT NULL,
-	ExpectedDuration DECIMAL, 
-	CONSTRAINT PK_CustomerService PRIMARY KEY (CustomerID, ServiceTypeID)
+	ExpectedDuration DECIMAL
 );
 -- CustomerService Table
 IF OBJECT_ID(N'dbo.CustomerServiceSchedule', N'U') IS NOT NULL
@@ -114,13 +114,13 @@ IF OBJECT_ID(N'dbo.Rolap_CustomerServiceSchedule_Facts', N'U') IS NOT NULL
     DROP TABLE dbo.Rolap_CustomerServiceSchedule_Facts;
 GO
 CREATE TABLE Rolap_CustomerServiceSchedule_Facts(
+	ID INT NOT NULL PRIMARY KEY,
 	CustomerID INT NOT NULL,
 	ServiceTypeID INT NOT NULL,
 	EmployeeID INT,
 	StartDateTime DATETIME,
 	ActualDuration DECIMAL,
-	Status CHAR(1),
-	CONSTRAINT PK_RCustomerServiceSchedule PRIMARY KEY (CustomerID, ServiceTypeID)
+	Status CHAR(1)
 );
 GO
 
@@ -154,8 +154,8 @@ GO
 CREATE TRIGGER Tr_CustomerServiceAdded ON CustomerService
 AFTER INSERT
 AS BEGIN
-	INSERT INTO dbo.Rolap_CustomerServiceSchedule_Facts (CustomerID, ServiceTypeID, ActualDuration)
-	SELECT CustomerID, ServiceTypeID, ExpectedDuration FROM INSERTED ins;
+	INSERT INTO dbo.Rolap_CustomerServiceSchedule_Facts (ID, CustomerID, ServiceTypeID, ActualDuration)
+	SELECT ID, CustomerID, ServiceTypeID, ExpectedDuration FROM INSERTED ins;
 END
 GO
 
